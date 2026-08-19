@@ -1,0 +1,20 @@
+[
+  {
+    "testName": "ทดสอบบันทึกรายจ่าย: เติมเกม",
+    "desc": "เติม Valorant Points",
+    "amount": -1000,
+    "expectedChange": -1000
+  },
+  {
+    "testName": "ทดสอบบันทึกรายจ่าย: ค่าเช่า AWS Server",
+    "desc": "AWS EC2 Hosting",
+    "amount": -1500,
+    "expectedChange": -1500
+  },
+  {
+    "testName": "ทดสอบบันทึกรายรับ: รับงานนอก",
+    "desc": "ค่าจ้างทำ LINE Chatbot",
+    "amount": 8000,
+    "expectedChange": 8000
+  }
+]

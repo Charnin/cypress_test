@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ระบบจัดการรายรับ-รายจ่าย</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 🟢 กล่องที่ 1: หน้าต่าง Login -->
+    <div id="login-section" class="container">
+        <h2>🔒 เข้าสู่ระบบ</h2>
+        <div class="card form-section">
+            <input type="text" id="username" placeholder="ชื่อผู้ใช้ (ทดสอบ: Charnin)">
+            <input type="password" id="password" placeholder="รหัสผ่าน (ทดสอบ: pass1234)">
+            <button id="login-btn">Login</button>
+            <p id="login-error" class="error"></p>
+        </div>
+    </div>
+
+    <!-- 🔵 กล่องที่ 2: หน้ารายรับ-รายจ่าย (ซ่อนไว้ก่อน) -->
+    <div id="expense-section" class="container" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>💰 บัญชีของฉัน</h2>
+            <button id="logout-btn" style="width: auto; background-color: #dc3545; padding: 5px 10px;">ออกจากระบบ</button>
+        </div>
+        
+        <div class="card form-section">
+            <input type="text" id="desc-input" placeholder="ค่าอะไรเอ่ย? (เช่น ค่ากาแฟ)">
+            <input type="number" id="amount-input" placeholder="จำนวนเงิน (บาท)">
+            <button id="add-btn">เพิ่มรายการ</button>
+            <p id="error-msg" class="error"></p>
+        </div>
+
+        <div class="summary">
+            <h3>ยอดรวมทั้งหมด: <span id="total-amount">0</span> บาท</h3>
+        </div>
+
+        <ul id="expense-list"></ul>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

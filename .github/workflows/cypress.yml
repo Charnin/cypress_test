@@ -1,0 +1,43 @@
+name: E2E Cypress Tests
+
+# 1. กำหนดว่าจะให้รันตอนไหน (รันทุกครั้งที่มีการ Push โค้ดขึ้น branch main)
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest # ใช้เซิร์ฟเวอร์ Linux ของ GitHub
+
+    steps:
+      # 2. ดึงโค้ดล่าสุดของเรามาที่เซิร์ฟเวอร์
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 3. ติดตั้ง Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 4. ติดตั้ง Package ทั้งหมด (รวมถึง Cypress และ Faker)
+      - name: Install Dependencies
+        run: npm install
+
+      # 5. รันเซิร์ฟเวอร์และรันเทสต์! (พระเอกของเราคือ Action ตัวนี้)
+      - name: Start Server and Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: node server.js
+          wait-on: 'http://localhost:3000' # รอให้เว็บเปิดติดก่อนค่อยเทสต์
+
+      # 6. เก็บ Report สวยๆ ที่เราทำไว้มาให้ดาวน์โหลด (แม้เทสต์จะพังก็ให้เก็บมา)
+      - name: Upload Cypress Report
+        uses: actions/upload-artifact@v4
+        if: always() 
+        with:
+          name: mochawesome-report
+          path: cypress/reports/html
+          retention-days: 7
