@@ -22,7 +22,7 @@ describe('ทดสอบระบบ Login และ การออกจา�
 
   it('ควร Login สำเร็จ และเห็นหน้าจัดการบัญชี', () => {
     cy.intercept('GET', '/api/v1/expenses').as('getExpenses')
-    
+
     cy.get('#username').type('Charnin')
     cy.get('#password').type('pass1234')
     cy.get('#login-btn').click()
@@ -55,10 +55,10 @@ describe('ทดสอบการจัดการบัญชี (หลั�
   beforeEach(() => {
     cy.request('POST', 'http://localhost:3000/api/v1/reset')
     cy.intercept('GET', '/api/v1/expenses').as('getExpenses')
-    
+
     cy.clearLocalStorage()
     cy.loginByApi('Charnin', 'pass1234')
-    
+
     cy.visit('http://localhost:3000')
     cy.wait('@getExpenses')
   })
@@ -83,7 +83,7 @@ describe('ทดสอบการจัดการบัญชี (หลั�
       // 3. ตรวจสอบยอดรวมที่คำนวณจากตัวเลขที่สุ่มได้
       const expectedTotal = initialTotal + randomIncomeAmount + randomExpenseAmount
       cy.get('#total-amount').should('have.text', String(expectedTotal))
-      
+
       // 4. เช็คว่าชื่อรายการที่โชว์ตรงกับที่ Faker สุ่มมาไหม
       cy.get('#expense-list li').last().should('contain', randomExpenseDesc)
     })
@@ -100,6 +100,31 @@ describe('ทดสอบการจัดการบัญชี (หลั�
       cy.get('#total-amount').should('have.text', String(initialTotal))
       cy.get('#expense-list li').last().should('not.contain', 'ซื้อคอมพิวเตอร์ตัวท็อป')
     })
+  })
+
+  it('ควรทำรายการต่อเนื่องหลายรายการ และนับจำนวนประวัติได้ถูกต้อง', () => {
+
+    cy.get('#total-amount').should('not.have.text', '0').then(($total) => {
+      const initialTotal = parseFloat($total.text())
+
+      // 1. จำลองสถานการณ์การใช้จ่ายแบบต่อเนื่อง
+      cy.addExpense('ขายไอเทมใน PUBG', 1500)
+      cy.addExpense('ซื้ออาหารเปียกให้แมวสามสี', -350)
+      cy.addExpense('พรีออเดอร์คีย์บอร์ด Keychron', -4500)
+
+      // 2. คำนวณยอดสุทธิ (ยอดตั้งต้น + รายรับ - รายจ่าย)
+      const expectedTotal = initialTotal + 1500 - 350 - 4500
+      cy.get('#total-amount').should('have.text', String(expectedTotal))
+
+      // 3. ตรวจสอบจำนวนรายการในหน้าเว็บ
+      // (ของเดิมตั้งต้นมี 'เงินเดือน' 1 รายการ + เพิ่งเพิ่มไป 3 = ต้องมี 4 รายการ)
+      cy.get('#expense-list li').should('have.length', 4)
+
+      // 4. ตรวจสอบว่ารายการถูกเรียงลำดับถูกต้อง (อันล่าสุดต้องอยู่ล่างสุด)
+      cy.get('#expense-list li').last().should('contain', 'พรีออเดอร์คีย์บอร์ด Keychron')
+      cy.get('#expense-list li').eq(1).should('contain', 'ขายไอเทมใน PUBG') // eq(1) คือการชี้ไปที่บรรทัดที่ 2 (เริ่มนับจาก 0)
+    })
+
   })
 
 })
